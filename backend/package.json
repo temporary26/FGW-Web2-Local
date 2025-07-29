@@ -1,0 +1,49 @@
+{
+  "name": "quickcv-backend",
+  "version": "1.0.0",
+  "description": "Backend for QuickCV MEVN application",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node start.js",
+    "dev": "nodemon start.js",
+    "server": "node server.js",
+    "test": "node test/auth.test.js",
+    "test:auth": "node test/auth.test.js",
+    "build": "echo 'No build step required'",
+    "render-postbuild": "echo 'Build complete'"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "node-fetch": "^3.3.2",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "mevn",
+    "vue",
+    "express",
+    "mongodb",
+    "authentication"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
