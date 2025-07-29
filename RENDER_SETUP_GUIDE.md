@@ -200,6 +200,12 @@ curl https://your-render-app.onrender.com/api/cv
 
 ### 7.2 Common Issues
 ```bash
+# Database Authentication Failed Error:
+- Check MongoDB URI format (remove < > brackets)
+- Verify username/password are correct
+- Ensure database user has proper permissions
+- Check if IP address is whitelisted (0.0.0.0/0)
+
 # Missing Build/Start Command Fields:
 - Language should be "Node" not "Docker" 
 - Check the Advanced section for these fields
