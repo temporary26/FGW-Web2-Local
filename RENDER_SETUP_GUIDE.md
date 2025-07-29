@@ -4,11 +4,13 @@
 
 ### 1.1 Push to GitHub
 ```bash
-# Make sure your code is pushed to GitHub
+# Make sure your ENTIRE project is pushed to GitHub (including both frontend and backend)
 git add .
 git commit -m "Prepare for Render deployment"
 git push origin main
 ```
+
+**Important:** Yes, push the whole project to GitHub! You'll specify which directory to deploy later.
 
 ### 1.2 Verify Files
 Ensure these files exist in your backend directory:
@@ -56,18 +58,42 @@ Ensure these files exist in your backend directory:
 3. Authorize Render to access your repositories
 
 ### 3.2 Create Web Service
+
+**Updated Render Configuration (Current Interface):**
+
+1. **Dashboard → New → Web Service**
+2. **Connect Repository → Select your CV project** (the whole repository)
+3. **Configure the following fields:**
+
 ```bash
-# 1. Dashboard → New → Web Service
-# 2. Connect Repository → Select your CV project
-# 3. Configure Service:
-   - Name: quickcv-backend
-   - Environment: Node
-   - Region: Oregon (US West)
-   - Branch: main
-   - Root Directory: backend
-   - Build Command: npm install
-   - Start Command: npm start
+Name: quickcv-backend
+Project: (leave default or create new)
+Language: Change from "Docker" to "Node" ⚠️ IMPORTANT!
+Region: Oregon (US West) 
+Root Directory: backend
+Dockerfile Path: (leave empty or delete)
 ```
+
+4. **In Advanced section, add:**
+```bash
+Build Command: npm install
+Start Command: npm start
+```
+
+5. **If you don't see Build/Start Command fields:**
+   - Look in the **Advanced** section
+   - Or they might be auto-detected after you set Language to "Node"
+
+**🔥 Important Notes:**
+- Choose "Node" not "Node.js" 
+- Build/Start commands might be in the Advanced section
+- Make sure Root Directory is set to "backend"
+
+**Alternative: If you still don't see Build/Start commands:**
+1. Just set Language to "Node" and Root Directory to "backend"
+2. Click "Create Web Service" 
+3. Render will auto-detect from your package.json
+4. You can edit build/start commands later in Settings → Build & Deploy
 
 ### 3.3 Configure Environment Variables
 In Render dashboard, add these environment variables:
@@ -174,6 +200,15 @@ curl https://your-render-app.onrender.com/api/cv
 
 ### 7.2 Common Issues
 ```bash
+# Missing Build/Start Command Fields:
+- Language should be "Node" not "Docker" 
+- Check the Advanced section for these fields
+- Or let Render auto-detect from package.json
+
+# Build/Start Commands Not Showing:
+- Create the service first, then edit in Settings → Build & Deploy
+- Render will auto-detect: Build="npm install", Start="npm start"
+
 # CORS Errors:
 - Update CLIENT_URL in Render
 - Check VITE_API_URL in Vercel
@@ -186,6 +221,11 @@ curl https://your-render-app.onrender.com/api/cv
 # Build Failures:
 - Check package.json scripts
 - Verify Node.js version compatibility
+- Ensure Root Directory is set to "backend"
+
+# Dockerfile Detected Error:
+- Change Language from "Docker" to "Node"
+- Clear Dockerfile Path field
 ```
 
 ## Final URLs
