@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "quickcv-frontend",
   "builds": [
     {
       "src": "package.json",
@@ -17,11 +16,19 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "@vite_api_url"
+    "VITE_API_URL": "https://quickcv-backend-dqn1.onrender.com",
+    "VITE_APP_NAME": "QuickCV",
+    "VITE_APP_VERSION": "1.0.0",
+    "VITE_ENABLE_ANALYTICS": "false",
+    "VITE_ENABLE_PWA": "false"
   },
   "build": {
     "env": {
-      "VITE_API_URL": "@vite_api_url"
+      "VITE_API_URL": "https://quickcv-backend-dqn1.onrender.com",
+      "VITE_APP_NAME": "QuickCV",
+      "VITE_APP_VERSION": "1.0.0",
+      "VITE_ENABLE_ANALYTICS": "false",
+      "VITE_ENABLE_PWA": "false"
     }
   }
 }

@@ -57,7 +57,13 @@ MONGODB_URI=mongodb://localhost:27017/quickcv
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 JWT_EXPIRE=30d
 CLIENT_URL=http://localhost:5173
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+COOKIE_SECURE=false
+COOKIE_SAME_SITE=lax
 ```
+
+**Note:** This project is now configured to use **local MongoDB** by default. The database will be stored locally on your machine.
 
 ### 3. Frontend Setup
 ```bash
@@ -65,16 +71,40 @@ cd ../frontend
 npm install
 ```
 
-### 4. Start MongoDB
-Make sure MongoDB is running on your system:
-```bash
-# If using local MongoDB
-mongod
+### 4. Install and Start MongoDB Locally
 
-# Or start MongoDB service
-sudo systemctl start mongod  # Linux
-brew services start mongodb-community  # macOS
+**Option A: Quick Setup (Windows)**
+Run the provided setup script:
+```bash
+# Run this from the project root directory
+./setup-local-db.bat
 ```
+
+**Option B: Manual Installation**
+
+1. **Install MongoDB Community Server:**
+   - Download from: https://www.mongodb.com/try/download/community
+   - Follow the installation instructions for your OS
+
+2. **Start MongoDB:**
+   ```bash
+   # Windows - Use the provided script
+   ./start-mongodb.bat
+   
+   # Or manually:
+   mongod --dbpath=data/db --port=27017
+   
+   # Linux/macOS
+   mongod --dbpath=./data/db --port=27017
+   
+   # Or if MongoDB is installed as a service:
+   sudo systemctl start mongod  # Linux
+   brew services start mongodb-community  # macOS
+   ```
+
+3. **Verify MongoDB is running:**
+   - You should see: "Waiting for connections on port 27017"
+   - The database `quickcv` will be created automatically when you first run the app
 
 ### 5. Run the Application
 

@@ -36,7 +36,10 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   process.env.CLIENT_URL,
-  // Add your Vercel domain here once deployed
+  // Add your Vercel domain patterns
+  'https://quickcv-frontend.vercel.app',
+  /https:\/\/quickcv-frontend-.*\.vercel\.app$/,
+  /https:\/\/.*ryans-projects-ed648d19\.vercel\.app$/
 ].filter(Boolean);
 
 app.use(cors({
@@ -44,7 +47,17 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+    // Check if origin matches any allowed origin (string or regex)
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return allowedOrigin === origin;
+      } else if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
+      return false;
+    });
+    
+    if (isAllowed || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

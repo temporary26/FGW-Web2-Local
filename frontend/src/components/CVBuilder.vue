@@ -291,9 +291,6 @@
         <button @click="previewCV" class="preview-button">
           Preview CV
         </button>
-        <button @click="downloadCV" class="download-button">
-          Download PDF
-        </button>
       </div>
 
       <!-- Success/Error Messages -->
@@ -467,15 +464,6 @@ const previewCV = async () => {
       message.value = ''
     }, 3000)
   }
-}
-
-const downloadCV = () => {
-  // TODO: Implement PDF download functionality
-  message.value = 'Download functionality coming soon!'
-  messageType.value = 'info'
-  setTimeout(() => {
-    message.value = ''
-  }, 3000)
 }
 
 // Load CV data from database on mount
@@ -698,7 +686,7 @@ watch(interestsText, () => {
   flex-wrap: wrap;
 }
 
-.save-button, .preview-button, .download-button {
+.save-button, .preview-button {
   padding: 1rem 2rem;
   border-radius: 12px;
   font-size: 1rem;
@@ -734,17 +722,6 @@ watch(interestsText, () => {
 .preview-button:hover {
   background: rgba(59, 130, 246, 0.3);
   border-color: rgba(59, 130, 246, 0.5);
-}
-
-.download-button {
-  background: rgba(168, 85, 247, 0.2);
-  border: 1px solid rgba(168, 85, 247, 0.3);
-  color: #c084fc;
-}
-
-.download-button:hover {
-  background: rgba(168, 85, 247, 0.3);
-  border-color: rgba(168, 85, 247, 0.5);
 }
 
 .message {
@@ -796,7 +773,7 @@ watch(interestsText, () => {
     align-items: center;
   }
   
-  .save-button, .preview-button, .download-button {
+  .save-button, .preview-button {
     width: 100%;
     max-width: 300px;
   }
