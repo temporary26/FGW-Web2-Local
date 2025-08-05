@@ -3,10 +3,10 @@ import User from '../models/User.js';
 import { sendTokenResponse } from '../config/jwt.js';
 import { sanitizeInput, validateEmail, validatePassword, validateUsername } from '../utils/validation.js';
 
-// @desc    Register user
+// đăng ký user mới
 export const registerUser = async (req, res) => {
   try {
-    // Check for validation errors
+    // kiểm tra lỗi validation từ middleware
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -18,7 +18,7 @@ export const registerUser = async (req, res) => {
 
     const { username, email, password } = req.body;
 
-    // Check if user already exists
+    // kiểm tra user đã tồn tại chưa (theo email hoặc username)
     const existingUser = await User.findOne({
       $or: [{ email }, { username }]
     });
@@ -30,13 +30,14 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    // Create user
+    // tạo user mới trong database
     const user = await User.create({
       username,
       email,
-      password
+      password // password sẽ được hash tự động trong model
     });
 
+    // gửi response kèm jwt token
     sendTokenResponse(user, 201, res);
   } catch (error) {
     console.error('Registration error:', error);
@@ -47,10 +48,10 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Login user
+// đăng nhập user
 export const loginUser = async (req, res) => {
   try {
-    // Check for validation errors
+    // kiểm tra lỗi validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -62,7 +63,7 @@ export const loginUser = async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Check for user and include password
+    // tìm user theo email và include password field (mặc định bị exclude)
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
@@ -72,7 +73,7 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    // Check if password matches
+    // so sánh password với hash trong db
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
@@ -82,10 +83,11 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    // Update last login
+    // cập nhật thời gian đăng nhập cuối
     user.lastLogin = new Date();
     await user.save();
 
+    // gửi response kèm jwt token
     sendTokenResponse(user, 200, res);
   } catch (error) {
     console.error('Login error:', error);
@@ -96,9 +98,10 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Get current logged in user
+// lấy thông tin user hiện tại (đã authenticated)
 export const getCurrentUser = async (req, res) => {
   try {
+    // req.user đã được set trong middleware auth
     const user = await User.findById(req.user.id);
     
     res.status(200).json({
@@ -114,8 +117,9 @@ export const getCurrentUser = async (req, res) => {
   }
 };
 
-// @desc    Logout user / clear cookie
+// đăng xuất user - xóa cookie
 export const logoutUser = (req, res) => {
+  // set cookie token thành none và expire ngay
   res.cookie('token', 'none', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true
@@ -127,10 +131,10 @@ export const logoutUser = (req, res) => {
   });
 };
 
-// @desc    Update user profile
+// cập nhật thông tin profile user
 export const updateProfile = async (req, res) => {
   try {
-    // Check for validation errors
+    // kiểm tra validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -143,6 +147,7 @@ export const updateProfile = async (req, res) => {
     const { username, email } = req.body;
     const updateFields = {};
 
+    // chỉ update những field được gửi lên
     if (username) updateFields.username = username;
     if (email) updateFields.email = email;
 

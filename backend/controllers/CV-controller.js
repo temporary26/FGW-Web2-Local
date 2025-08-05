@@ -1,12 +1,13 @@
 import { validationResult } from 'express-validator';
 import CV from '../models/CV.js';
 
-// @desc    Get user's CV data
+// lấy dữ liệu cv của user
 export const getCvData = async (req, res) => {
   try {
+    // tìm cv theo user id
     let cv = await CV.findOne({ user: req.user.id });
     
-    // If no CV exists, create a default one
+    // nếu chưa có cv thì tạo cv mặc định với dữ liệu trống
     if (!cv) {
       cv = await CV.create({
         user: req.user.id,
@@ -52,10 +53,10 @@ export const getCvData = async (req, res) => {
   }
 };
 
-// @desc    Create or update user's CV data
+// tạo mới hoặc cập nhật cv của user
 export const saveOrUpdateCv = async (req, res) => {
   try {
-    // Check for validation errors
+    // kiểm tra validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -65,6 +66,7 @@ export const saveOrUpdateCv = async (req, res) => {
       });
     }
 
+    // extract dữ liệu từ request body
     const {
       personalDetails,
       about,
@@ -75,11 +77,11 @@ export const saveOrUpdateCv = async (req, res) => {
       projects
     } = req.body;
 
-    // Find existing CV or create new one
+    // tìm cv hiện tại của user
     let cv = await CV.findOne({ user: req.user.id });
 
     if (cv) {
-      // Update existing CV
+      // cập nhật cv hiện có - chỉ update field nào có dữ liệu
       cv.personalDetails = personalDetails || cv.personalDetails;
       cv.about = about || cv.about;
       cv.education = education || cv.education;
@@ -90,7 +92,7 @@ export const saveOrUpdateCv = async (req, res) => {
       
       await cv.save();
     } else {
-      // Create new CV
+      // tạo cv mới với dữ liệu được gửi lên
       cv = await CV.create({
         user: req.user.id,
         personalDetails: personalDetails || {
@@ -136,9 +138,10 @@ export const saveOrUpdateCv = async (req, res) => {
   }
 };
 
-// @desc    Delete user's CV data
+// xóa cv của user
 export const deleteCv = async (req, res) => {
   try {
+    // tìm cv của user hiện tại
     const cv = await CV.findOne({ user: req.user.id });
 
     if (!cv) {
@@ -148,6 +151,7 @@ export const deleteCv = async (req, res) => {
       });
     }
 
+    // xóa cv khỏi database
     await CV.findByIdAndDelete(cv._id);
 
     res.status(200).json({

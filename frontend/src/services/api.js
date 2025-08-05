@@ -1,26 +1,27 @@
 import axios from 'axios';
 
-// Get API URL from environment variables
+// lấy url api từ biến môi trường
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// For debugging in development only
+// hiển thị url trong môi trường dev để debug
 if (import.meta.env.DEV) {
   console.log('API Base URL:', API_BASE_URL);
 }
 
-// Create axios instance
+// tạo axios instance với config cơ bản
 const api = axios.create({
   baseURL: `${API_BASE_URL}/api`,
-  withCredentials: true,
+  withCredentials: true, // cho phép gửi cookies
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 second timeout
+  timeout: 10000, // timeout 10 giây
 });
 
-// Request interceptor to add auth token
+// interceptor cho request - tự động thêm token vào header
 api.interceptors.request.use(
   (config) => {
+    // lấy token từ localStorage và thêm vào header Authorization
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -32,17 +33,18 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle errors
+// interceptor cho response - xử lý lỗi tự động
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    // Only redirect on 401 if it's not a login attempt
+    // nếu lỗi 401 (unauthorized) và không phải là request login thì tự động logout
     if (error.response?.status === 401 && !error.config.url.includes('/auth/login')) {
-      // Token expired or invalid (but not a login failure)
+      // xóa token và user khỏi localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      // chuyển về trang đăng nhập
       window.location.href = '/';
     }
     return Promise.reject(error);

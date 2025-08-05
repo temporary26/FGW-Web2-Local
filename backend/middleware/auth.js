@@ -1,20 +1,20 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-// Protect routes - require authentication
+// middleware bảo vệ routes - yêu cầu authentication
 export const protect = async (req, res, next) => {
   let token;
 
-  // Check for token in headers
+  // kiểm tra token trong header Authorization (Bearer token)
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
   }
-  // Check for token in cookies
+  // hoặc kiểm tra token trong cookies
   else if (req.cookies.token) {
     token = req.cookies.token;
   }
 
-  // Make sure token exists
+  // nếu không có token thì từ chối truy cập
   if (!token) {
     return res.status(401).json({
       success: false,
@@ -23,10 +23,10 @@ export const protect = async (req, res, next) => {
   }
 
   try {
-    // Verify token
+    // xác minh token với jwt secret
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Get user from token
+    // lấy thông tin user từ id trong token và gắn vào req.user
     req.user = await User.findById(decoded.userId);
 
     if (!req.user) {
@@ -36,6 +36,7 @@ export const protect = async (req, res, next) => {
       });
     }
 
+    // cho phép tiếp tục đến controller
     next();
   } catch (error) {
     return res.status(401).json({
@@ -45,7 +46,7 @@ export const protect = async (req, res, next) => {
   }
 };
 
-// Grant access to specific roles
+// middleware phân quyền theo role (hiện tại chưa dùng)
 export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
